@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
@@ -18,7 +17,7 @@ public class JwtService {
     private static final String SECRET_KEY = "c7e17336ee6172c7818db92366d32f433833b224a14edd22be19dfb420b6ad25";
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractallClaims(token);
+        final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
@@ -60,7 +59,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractallClaims(String token) {
+    private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
