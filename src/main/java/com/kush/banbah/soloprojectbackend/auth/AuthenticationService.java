@@ -1,9 +1,10 @@
 package com.kush.banbah.soloprojectbackend.auth;
 
-import com.kush.banbah.soloprojectbackend.User.Role;
-import com.kush.banbah.soloprojectbackend.User.User;
-import com.kush.banbah.soloprojectbackend.User.UserRepo;
+
 import com.kush.banbah.soloprojectbackend.config.JwtService;
+import com.kush.banbah.soloprojectbackend.user.Role;
+import com.kush.banbah.soloprojectbackend.user.User;
+import com.kush.banbah.soloprojectbackend.user.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

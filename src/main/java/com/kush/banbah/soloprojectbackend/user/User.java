@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.User;
+package com.kush.banbah.soloprojectbackend.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
