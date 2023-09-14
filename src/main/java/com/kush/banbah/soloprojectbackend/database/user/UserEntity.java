@@ -1,16 +1,16 @@
-package com.kush.banbah.soloprojectbackend.user;
+package com.kush.banbah.soloprojectbackend.database.user;
 
+import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
 
 @Data
 @Builder
@@ -18,18 +18,33 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class User implements UserDetails {
+public class UserEntity implements UserDetails {
+
+    public enum Role {
+        TEACHER,
+        STUDENT
+    }
+
+
 
     @Id
     @GeneratedValue
     @Column(name = "user_id")
     private Integer id;
-    private String firstname;
-    private String lastname;
+    private String name;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_classes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "class_name"))
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    Set<ClassEntity> classes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
