@@ -24,13 +24,13 @@ public class SecurityConfiguration {
             http
                     .csrf(csrf -> csrf.disable())
                     .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**")
-                        .permitAll()
-                        .anyRequest()
-                        .authenticated())
+                            .requestMatchers("/api/auth/**")
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated())
                     .sessionManagement(sess -> sess
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authenticationProvider( authenticationProvider)
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authenticationProvider(authenticationProvider)
                     .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
             return http.build();
         } catch (Exception e) {

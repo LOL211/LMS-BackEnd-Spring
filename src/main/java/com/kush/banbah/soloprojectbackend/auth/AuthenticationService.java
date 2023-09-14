@@ -18,34 +18,35 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
-    User user = User.builder()
-            .firstname(registerRequest.getFirstname())
-            .lastname(registerRequest.getLastname())
-            .email(registerRequest.getEmail())
-            .password(passwordEncoder.encode(registerRequest.getPassword()))
-            .role(Role.STUDENT)
-            .build();
 
-    repo.save(user);
-    String jwtToken = jwtService.generateToken(user);
-    return AuthenticationResponse.builder()
-            .token(jwtToken)
-            .build();
+    public AuthenticationResponse register(RegisterRequest registerRequest) {
+        User user = User.builder()
+                .firstname(registerRequest.getFirstname())
+                .lastname(registerRequest.getLastname())
+                .email(registerRequest.getEmail())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(Role.STUDENT)
+                .build();
+
+        repo.save(user);
+        String jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
-    authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                    authRequest.getEmail(),
-                    authRequest.getPassword()
-            )
-    );
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        authRequest.getEmail(),
+                        authRequest.getPassword()
+                )
+        );
 
-    User user = repo.findByEmail(authRequest.getEmail()).orElseThrow();
-    String jwtToken = jwtService.generateToken(user);
-    return AuthenticationResponse.builder()
-            .token(jwtToken)
-            .build();
+        User user = repo.findByEmail(authRequest.getEmail()).orElseThrow();
+        String jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 }
