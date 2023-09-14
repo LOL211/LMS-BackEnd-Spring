@@ -2,9 +2,8 @@ package com.kush.banbah.soloprojectbackend.auth;
 
 
 import com.kush.banbah.soloprojectbackend.config.JwtService;
-import com.kush.banbah.soloprojectbackend.user.Role;
-import com.kush.banbah.soloprojectbackend.user.User;
-import com.kush.banbah.soloprojectbackend.user.UserRepo;
+import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
+import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,12 +20,11 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        User user = User.builder()
-                .firstname(registerRequest.getFirstname())
-                .lastname(registerRequest.getLastname())
+        UserEntity user = UserEntity.builder()
+                .name(registerRequest.getName())
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(Role.STUDENT)
+                .role(UserEntity.Role.STUDENT)
                 .build();
 
         repo.save(user);
@@ -44,7 +42,7 @@ public class AuthenticationService {
                 )
         );
 
-        User user = repo.findByEmail(authRequest.getEmail()).orElseThrow();
+        UserEntity user = repo.findByEmail(authRequest.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)

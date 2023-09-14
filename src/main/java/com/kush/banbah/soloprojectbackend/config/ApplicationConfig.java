@@ -1,6 +1,6 @@
 package com.kush.banbah.soloprojectbackend.config;
 
-import com.kush.banbah.soloprojectbackend.user.UserRepo;
+import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
