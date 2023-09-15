@@ -11,6 +11,7 @@ import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
-public class TestDatabase implements ApplicationRunner {
+public class DatabaseValueLoader implements ApplicationRunner {
 
     private final ClassRepo classRepo;
     private final StudentTestsRepo studentTestsRepo;
@@ -92,6 +93,10 @@ public class TestDatabase implements ApplicationRunner {
                 studentTestsRepo.save(st);
             });
         });
+
+        UserEntity u = userRepo.findAllByRole(UserEntity.Role.TEACHER).orElse(null).get(0);
+        UserDetails ud = (UserDetails) u;
+        ud.getAuthorities().forEach(System.out::println);
 
     }
 
