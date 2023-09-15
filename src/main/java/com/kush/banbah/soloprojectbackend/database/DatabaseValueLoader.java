@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend;
+package com.kush.banbah.soloprojectbackend.database;
 
 import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
@@ -93,10 +93,6 @@ public class DatabaseValueLoader implements ApplicationRunner {
                 studentTestsRepo.save(st);
             });
         });
-
-        UserEntity u = userRepo.findAllByRole(UserEntity.Role.TEACHER).orElse(null).get(0);
-        UserDetails ud = (UserDetails) u;
-        ud.getAuthorities().forEach(System.out::println);
 
     }
 
