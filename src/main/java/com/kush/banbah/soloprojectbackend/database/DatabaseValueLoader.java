@@ -47,6 +47,10 @@ public class DatabaseValueLoader implements ApplicationRunner {
                     .className("CS" + (1200 + (c + 1)))
                     .build();
             classRepo.save(classs);
+            Set<ClassEntity> classEntitySet = new HashSet<>();
+            classEntitySet.add(classs);
+            teacher.setClasses(classEntitySet);
+            userRepo.save(teacher);
         }
 
         List<ClassEntity> allClasses = classRepo.findAll();
