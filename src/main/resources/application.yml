@@ -1,8 +1,7 @@
 spring:
+  config:
+    import: file:local.yml
   datasource:
-    url: jdbc:mysql://localhost:3306/jwt_security
-    username: root
-    password: oCwX3^F71$
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
