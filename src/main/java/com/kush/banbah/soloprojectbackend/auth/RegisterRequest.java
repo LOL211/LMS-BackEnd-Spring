@@ -12,10 +12,10 @@ public class RegisterRequest {
 
     @NotNull(message = "Name is missing")
     @NotBlank
-    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not in proper format")
     private String name;
     @NotNull
     @NotBlank
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not in proper format")
     private String email;
     @NotNull
     @NotBlank
