@@ -3,6 +3,7 @@ package com.kush.banbah.soloprojectbackend.database.user;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -38,6 +39,7 @@ public class UserEntity implements UserDetails {
     @NotNull
     private String name;
     @NotNull
+    @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not in proper format")
     private String email;
     @NotNull
     private String password;

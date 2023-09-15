@@ -3,6 +3,8 @@ package com.kush.banbah.soloprojectbackend.database.studentTest;
 
 import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +31,8 @@ public class StudentTestEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
     @NotNull
+    @Max(100)
+    @Min(0)
     private int score;
 }
 
