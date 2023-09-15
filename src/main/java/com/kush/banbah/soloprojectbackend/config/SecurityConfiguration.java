@@ -22,12 +22,15 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         try {
             http
-                    .csrf(csrf -> csrf.disable())
-                    .authorizeHttpRequests(auth -> auth
-                            .requestMatchers("/api/auth/**")
-                            .permitAll()
-                            .anyRequest()
-                            .authenticated())
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
+                        .requestMatchers("/testrole")
+                        .hasAuthority("TEACHER")
+                        .anyRequest()
+                        .authenticated()
+                    )
                     .sessionManagement(sess -> sess
                             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authenticationProvider(authenticationProvider)
