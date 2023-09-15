@@ -1,18 +1,22 @@
 package com.kush.banbah.soloprojectbackend.auth;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class RegisterRequest {
 
+    @NotNull(message = "Name is missing")
+    @NotBlank
     private String name;
+    @NotNull
+    @NotBlank
     private String email;
+    @NotNull
+    @NotBlank
     private String password;
 
 }
