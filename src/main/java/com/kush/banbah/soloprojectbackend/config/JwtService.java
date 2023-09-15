@@ -28,7 +28,6 @@ public class JwtService {
     }
 
 
-
     public String generateToken(@NotNull UserDetails userDetails) {
         return Jwts
                 .builder()

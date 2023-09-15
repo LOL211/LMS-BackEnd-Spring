@@ -20,13 +20,15 @@ import java.util.Set;
 @Table(name = "user")
 public class UserEntity implements UserDetails {
 
-    public enum Role {
-        TEACHER,
-        STUDENT
-    }
-
-
-
+    @ManyToMany
+    @JoinTable(
+            name = "user_classes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "class_name")
+    )
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    Set<ClassEntity> classes;
     @Id
     @GeneratedValue
     @Column(name = "user_id")
@@ -36,15 +38,6 @@ public class UserEntity implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @ManyToMany
-    @JoinTable(
-            name = "user_classes",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "class_name"))
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    Set<ClassEntity> classes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -79,5 +72,10 @@ public class UserEntity implements UserDetails {
     @Override //Is actually implemented by the lombok tags
     public String getPassword() {
         return password;
+    }
+
+    public enum Role {
+        TEACHER,
+        STUDENT
     }
 }

@@ -14,16 +14,14 @@ import java.util.Set;
 @Table(name = "class")
 public class ClassEntity {
 
-    @Id
-    private String className;
-
-    @OneToOne
-    @JoinColumn(name="teacher_id")
-    private UserEntity teacher;
-
     @ManyToMany(mappedBy = "classes")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     Set<UserEntity> users;
+    @Id
+    private String className;
+    @OneToOne
+    @JoinColumn(name = "teacher_id")
+    private UserEntity teacher;
 
 }

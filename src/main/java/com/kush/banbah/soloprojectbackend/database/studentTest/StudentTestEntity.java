@@ -21,14 +21,15 @@ public class StudentTestEntity {
 
     @Id
     @ManyToOne
-    @JoinColumn(name="test_id")
+    @JoinColumn(name = "test_id")
     private TestsEntity test;
     @Id
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
     private int score;
 }
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
