@@ -2,6 +2,7 @@ package com.kush.banbah.soloprojectbackend.database.classes;
 
 import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Set;
@@ -20,6 +21,7 @@ public class ClassEntity {
     Set<UserEntity> users;
     @Id
     private String className;
+    @NotNull
     @OneToOne
     @JoinColumn(name = "teacher_id")
     private UserEntity teacher;

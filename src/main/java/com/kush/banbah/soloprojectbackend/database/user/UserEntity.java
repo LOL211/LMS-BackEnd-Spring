@@ -2,6 +2,7 @@ package com.kush.banbah.soloprojectbackend.database.user;
 
 import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,9 +34,14 @@ public class UserEntity implements UserDetails {
     @GeneratedValue
     @Column(name = "user_id")
     private Integer id;
+
+    @NotNull
     private String name;
+    @NotNull
     private String email;
+    @NotNull
     private String password;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
 

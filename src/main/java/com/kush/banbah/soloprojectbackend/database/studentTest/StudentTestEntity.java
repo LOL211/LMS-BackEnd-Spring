@@ -3,6 +3,7 @@ package com.kush.banbah.soloprojectbackend.database.studentTest;
 
 import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class StudentTestEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+    @NotNull
     private int score;
 }
 
