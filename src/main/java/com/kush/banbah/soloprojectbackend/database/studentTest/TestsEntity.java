@@ -21,7 +21,7 @@ public class TestsEntity {
     private String test_name;
 
     @ManyToOne
-    @JoinColumn(name="className")
+    @JoinColumn(name = "class_name")
     private ClassEntity className;
 }
 
