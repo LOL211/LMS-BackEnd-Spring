@@ -13,12 +13,12 @@ public class RegisterRequest {
     @NotNull(message = "Name is missing")
     @NotBlank
     private String name;
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Email is missing")
+    @NotBlank(message = "Email is blank")
     @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not in proper format")
     private String email;
-    @NotNull
-    @NotBlank
+    @NotNull(message = "Password is missing")
+    @NotBlank(message = "Password is blank")
     private String password;
 
 }
