@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,16 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest authRequest) {
-        return ResponseEntity.ok(service.authenticate(authRequest));
+        try{
+            return ResponseEntity.ok(service.authenticate(authRequest));
+        }
+        catch(AuthenticationException e) {
+            return ResponseEntity
+                    .status(403)
+                    .body(new AuthenticationResponse(""));
+
+        }
+
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
