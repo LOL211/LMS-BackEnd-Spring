@@ -19,15 +19,17 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        return ResponseEntity.ok(service.register(registerRequest));
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
+//        return ResponseEntity.ok(service.register(registerRequest));
+//    }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest authRequest) {
         try{
-            return ResponseEntity.ok(service.authenticate(authRequest));
+            return ResponseEntity
+                    .status(200)
+                    .body(service.authenticate(authRequest));
         }
         catch(AuthenticationException e) {
             return ResponseEntity

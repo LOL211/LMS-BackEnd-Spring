@@ -19,20 +19,20 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
-        UserEntity user = UserEntity.builder()
-                .name(registerRequest.getName())
-                .email(registerRequest.getEmail())
-                .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(UserEntity.Role.STUDENT)
-                .build();
-
-        repo.save(user);
-        String jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
-    }
+//    public AuthenticationResponse register(RegisterRequest registerRequest) {
+//        UserEntity user = UserEntity.builder()
+//                .name(registerRequest.getName())
+//                .email(registerRequest.getEmail())
+//                .password(passwordEncoder.encode(registerRequest.getPassword()))
+//                .role(UserEntity.Role.STUDENT)
+//                .build();
+//
+//        repo.save(user);
+//        String jwtToken = jwtService.generateToken(user);
+//        return AuthenticationResponse.builder()
+//                .token(jwtToken)
+//                .build();
+//    }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authRequest) {
         authenticationManager.authenticate(
