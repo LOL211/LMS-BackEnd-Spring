@@ -1,5 +1,7 @@
 package com.kush.banbah.soloprojectbackend.database.user;
 
+import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
+import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,5 +18,7 @@ public interface UserRepo extends JpaRepository<UserEntity, Integer> {
 
     @Query(value = "SELECT uc.class_name FROM user_classes uc where user_id=:user_id", nativeQuery = true)
     Optional<List<String>> findClassNamesByUser_id(@Param("user_id") int u_id);
+
+    Optional<List<UserEntity>> findByClasses(ClassEntity classTaken);
 
 }
