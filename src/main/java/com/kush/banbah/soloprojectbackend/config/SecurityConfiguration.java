@@ -24,10 +24,10 @@ public class SecurityConfiguration {
             http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**")
+                        .requestMatchers("/api/v1/auth/**")
                         .permitAll()
-                        .requestMatchers("/testrole")
-                        .hasAuthority("TEACHER")
+//                        .requestMatchers("/testrole")
+//                        .hasAuthority("TEACHER")
                         .anyRequest()
                         .authenticated()
                     )
