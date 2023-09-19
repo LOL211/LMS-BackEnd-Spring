@@ -58,11 +58,10 @@ public class DatabaseValueLoader implements ApplicationRunner {
             UserEntity student = UserEntity.builder()
                     .name("Student " + c)
                     .email("student" + c + "@gmail.com")
-                    .password(passwordEncoder.encode("test") + c)
+                    .password(passwordEncoder.encode("test"+ c))
                     .role(UserEntity.Role.STUDENT)
                     .build();
             int classnum = new Random().nextInt(1, 5);
-
             Set<ClassEntity> studentClasses = new HashSet<>();
             while (studentClasses.size() != classnum)
                 studentClasses.add(getRandomElement(allClasses));
