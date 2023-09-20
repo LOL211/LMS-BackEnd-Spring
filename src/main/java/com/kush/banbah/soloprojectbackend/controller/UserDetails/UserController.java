@@ -15,7 +15,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("/details")
     public ResponseEntity<String> retrieveUserDetails(Authentication auth)
     {
 
