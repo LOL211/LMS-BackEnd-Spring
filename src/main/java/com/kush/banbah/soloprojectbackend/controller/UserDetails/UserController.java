@@ -16,21 +16,16 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/details")
-    public ResponseEntity<String> retrieveUserDetails(Authentication auth)
-    {
+    public ResponseEntity<String> retrieveUserDetails(Authentication auth) {
 
         String result;
-        try{
+        try {
             result = userService.retrieveUserDetails(auth);
-        }
-        catch(NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             return ResponseEntity
                     .status(404)
                     .body("Could not find user!");
-        }
-        catch(ClassCastException | JsonProcessingException  e)
-        {
+        } catch (ClassCastException | JsonProcessingException e) {
             return ResponseEntity
                     .status(500)
                     .body("Unknown error");

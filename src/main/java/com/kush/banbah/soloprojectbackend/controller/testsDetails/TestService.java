@@ -3,7 +3,10 @@ package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.*;
+import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTest;
+import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTestsRepo;
+import com.kush.banbah.soloprojectbackend.database.studentTest.Tests;
+import com.kush.banbah.soloprojectbackend.database.studentTest.TestsRepo;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
@@ -13,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -81,11 +83,10 @@ public class TestService {
         Tests test = testsRepo.findByTestName(testName).orElseThrow(() -> new TestNotFoundException("Test of " + testName + " does not exist"));
 
 
-
         if (!test.getBelongsToClass().getClassName().equals(requestClass.getClassName()))
             throw new TestDoesNotBelongToClassException("Test " + testName + " does not belong to class " + className);
 
-        List<Object[]> queryResponses = studentTestsRepo.findAllStudentTestByTest(className,test.getTest_id());
+        List<Object[]> queryResponses = studentTestsRepo.findAllStudentTestByTest(className, test.getTest_id());
 
 
         List<TeacherTestResponse> responses = queryResponses.stream()
@@ -95,7 +96,6 @@ public class TestService {
 
         ObjectMapper mapper = new ObjectMapper();
         return mapper.valueToTree(responses).toString();
-
 
 
     }

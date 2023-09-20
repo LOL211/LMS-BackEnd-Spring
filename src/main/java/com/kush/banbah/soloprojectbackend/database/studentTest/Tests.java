@@ -20,7 +20,7 @@ public class Tests {
     @GeneratedValue
     private int test_id;
     @NotNull
-    @Column(name="test_name")
+    @Column(name = "test_name")
     private String testName;
 
     @ManyToOne

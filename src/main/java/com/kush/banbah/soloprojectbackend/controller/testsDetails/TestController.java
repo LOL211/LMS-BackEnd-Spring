@@ -45,7 +45,7 @@ public class TestController {
         try {
             return ResponseEntity
                     .status(200)
-                    .body(testService.getTeacherTests(className,auth));
+                    .body(testService.getTeacherTests(className, auth));
         } catch (ClassDoesNotExistException e) {
             return ResponseEntity
                     .status(404)
@@ -58,12 +58,12 @@ public class TestController {
     }
 
     @GetMapping("/teacher/{className}/{testName}")
-    public ResponseEntity<String> teacherRequestTest(@PathVariable String className,@PathVariable String testName, Authentication auth) {
+    public ResponseEntity<String> teacherRequestTest(@PathVariable String className, @PathVariable String testName, Authentication auth) {
 
         try {
             return ResponseEntity
                     .status(200)
-                    .body(testService.getTeacherStudentScores(className,testName, auth));
+                    .body(testService.getTeacherStudentScores(className, testName, auth));
         } catch (ClassDoesNotExistException | TestNotFoundException e) {
             return ResponseEntity
                     .status(404)
@@ -74,7 +74,6 @@ public class TestController {
                     .body(e.getMessage());
         }
     }
-
 
 
 }

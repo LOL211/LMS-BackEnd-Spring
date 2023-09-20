@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface TestsRepo extends JpaRepository<Tests, Integer> {
     List<Tests> findByBelongsToClass(Class aClass);
+
     List<Tests> findAllByBelongsToClassIn(List<Class> classList);
 
     Optional<Tests> findByTestName(String testName);

@@ -57,7 +57,7 @@ public class DatabaseValueLoader implements ApplicationRunner {
             User student = User.builder()
                     .name("Student " + c)
                     .email("student" + c + "@gmail.com")
-                    .password(passwordEncoder.encode("test"+ c))
+                    .password(passwordEncoder.encode("test" + c))
                     .role(User.Role.STUDENT)
                     .build();
             int classnum = new Random().nextInt(1, 5);

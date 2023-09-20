@@ -26,12 +26,11 @@ public class AuthenticationController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest authRequest) {
-        try{
+        try {
             return ResponseEntity
                     .status(200)
                     .body(service.authenticate(authRequest));
-        }
-        catch(AuthenticationException e) {
+        } catch (AuthenticationException e) {
             return ResponseEntity
                     .status(403)
                     .body(new AuthenticationResponse(""));
@@ -46,7 +45,7 @@ public class AuthenticationController {
         body.put("timestamp", new Date());
         body.put("status", HttpStatus.BAD_REQUEST);
         List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().forEach(val->errors.add(val.getDefaultMessage()));
+        ex.getBindingResult().getAllErrors().forEach(val -> errors.add(val.getDefaultMessage()));
         body.put("errors", errors);
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }

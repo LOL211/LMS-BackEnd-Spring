@@ -22,12 +22,12 @@ public class Class {
     Set<User> students;
 
     @Id
-    @Column(name="class_name")
+    @Column(name = "class_name")
     private String className;
 
     @NotNull
     @ManyToOne()
-    @JoinColumn(name="teacher_id")
+    @JoinColumn(name = "teacher_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private User teacher;
