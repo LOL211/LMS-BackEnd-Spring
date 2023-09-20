@@ -1,6 +1,6 @@
 package com.kush.banbah.soloprojectbackend.database.user;
 
-import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
+import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -20,17 +20,22 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class UserEntity implements UserDetails {
+public class User implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-            name = "user_classes",
-            joinColumns = @JoinColumn(name = "user_id"),
+            name = "student_classes",
+            joinColumns = @JoinColumn(name = "student_id"),
             inverseJoinColumns = @JoinColumn(name = "class_name")
     )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    Set<ClassEntity> classes;
+    Set<Class> student_classes;
+
+
+    @OneToMany(mappedBy = "teacher")
+    Set<Class> teacher_classes;
+
     @Id
     @GeneratedValue
     @Column(name = "user_id")
@@ -41,6 +46,7 @@ public class UserEntity implements UserDetails {
     @NotNull
     @Pattern(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", message = "Email is not in proper format")
     private String email;
+    @ToString.Exclude
     @NotNull
     private String password;
     @NotNull

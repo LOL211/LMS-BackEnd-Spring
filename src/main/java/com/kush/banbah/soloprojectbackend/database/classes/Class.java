@@ -1,6 +1,6 @@
 package com.kush.banbah.soloprojectbackend.database.classes;
 
-import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
+import com.kush.banbah.soloprojectbackend.database.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,17 +13,23 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "class")
-public class ClassEntity {
+public class Class {
 
-    @ManyToMany(mappedBy = "classes")
+
+    @ManyToMany(mappedBy = "student_classes")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    Set<UserEntity> users;
+    Set<User> students;
+
     @Id
+    @Column(name="class_name")
     private String className;
+
     @NotNull
-    @OneToOne
-    @JoinColumn(name = "teacher_id")
-    private UserEntity teacher;
+    @ManyToOne()
+    @JoinColumn(name="teacher_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private User teacher;
 
 }
