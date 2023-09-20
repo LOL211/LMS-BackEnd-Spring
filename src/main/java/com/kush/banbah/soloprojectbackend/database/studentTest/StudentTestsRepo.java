@@ -1,22 +1,23 @@
 package com.kush.banbah.soloprojectbackend.database.studentTest;
 
-import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
+import com.kush.banbah.soloprojectbackend.database.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface StudentTestsRepo extends JpaRepository<StudentTestEntity, UserTestId> {
+public interface StudentTestsRepo extends JpaRepository<StudentTest, UserTestId> {
 
-    Optional<List<StudentTestEntity>> findAllByTest(TestsEntity testsEntity);
 
-    Optional<List<StudentTestEntity>> findAllByUser(UserEntity testsEntity);
 
-    Optional<StudentTestEntity> findByUserAndTest(UserEntity user, TestsEntity test);
+    @Query(value = "SELECT st FROM StudentTest as st where st.student=:student AND st.test in :tests" )
+    List<StudentTest> findAllByStudentAndTest(@Param("student") User student, @Param("tests") List<Tests> test);
 
-    @Query(value = "SELECT st FROM StudentTestEntity as st where st.user=:user AND st.test in :tests" )
-    Optional<List<StudentTestEntity>> findAllByUserAndTest(@Param("user") UserEntity user,@Param("tests") List<TestsEntity> test);
-
+//    @Query(value =
+//            "SELECT score, u.user_id " +
+//            "FROM user_test st" +
+//            "RIGHT JOIN :students u" +
+//            "ON u.user_id=st.user_id AND st.test_id=:test_id", nativeQuery = true)
+//    Optional<List<String>> findAllStudentTestByTest(@Param("students") int[] students, @Param("test_id") int test_id);
 }
