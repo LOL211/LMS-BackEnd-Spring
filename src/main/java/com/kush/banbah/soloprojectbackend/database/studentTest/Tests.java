@@ -1,6 +1,6 @@
 package com.kush.banbah.soloprojectbackend.database.studentTest;
 
-import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
+import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,16 +14,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "test")
-public class TestsEntity {
+public class Tests {
 
     @Id
     @GeneratedValue
-    private int id;
+    private int test_id;
     @NotNull
-    private String test_name;
+    @Column(name="test_name")
+    private String testName;
 
     @ManyToOne
     @JoinColumn(name = "class_name")
-    private ClassEntity className;
+    private Class className;
 }
 
