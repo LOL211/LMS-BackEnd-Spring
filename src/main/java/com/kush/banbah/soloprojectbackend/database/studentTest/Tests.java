@@ -25,6 +25,6 @@ public class Tests {
 
     @ManyToOne
     @JoinColumn(name = "class_name")
-    private Class className;
+    private Class belongsToClass;
 }
 

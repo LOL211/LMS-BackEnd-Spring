@@ -73,7 +73,7 @@ public class DatabaseValueLoader implements ApplicationRunner {
 
             Tests test = Tests.builder()
                     .testName("Test " + c)
-                    .className(getRandomElement(allClasses))
+                    .belongsToClass(getRandomElement(allClasses))
                     .build();
             testsRepo.save(test);
         }
@@ -83,7 +83,7 @@ public class DatabaseValueLoader implements ApplicationRunner {
         allUsers.forEach(val -> {
 
             List<Class> classes = classRepo.findClassByStudents(val);
-            List<Tests> tests = testsRepo.findAllByClassNameIn(classes);
+            List<Tests> tests = testsRepo.findAllByBelongsToClassIn(classes);
 
             tests.forEach(test -> {
                 StudentTest st = StudentTest.builder()
