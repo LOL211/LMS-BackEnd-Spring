@@ -1,17 +1,16 @@
 package com.kush.banbah.soloprojectbackend.database;
 
-import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
+import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTestEntity;
+import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTest;
 import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTestsRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.TestsEntity;
+import com.kush.banbah.soloprojectbackend.database.studentTest.Tests;
 import com.kush.banbah.soloprojectbackend.database.studentTest.TestsRepo;
-import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
+import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -34,63 +33,62 @@ public class DatabaseValueLoader implements ApplicationRunner {
     public void run(ApplicationArguments args) {
 
         for (int c = 0; c < 4; c++) {
-            UserEntity teacher = UserEntity.builder()
+            User teacher = User.builder()
                     .name("Teacher " + (c + 1))
                     .email("teacher" + (c + 1) + "@gmail.com")
                     .password(passwordEncoder.encode("test" + (c + 1)))
-                    .role(UserEntity.Role.TEACHER)
+                    .role(User.Role.TEACHER)
                     .build();
             userRepo.save(teacher);
 
-            ClassEntity classs = ClassEntity.builder()
+            Class classs = Class.builder()
                     .teacher(teacher)
                     .className("CS" + (1200 + (c + 1)))
                     .build();
             classRepo.save(classs);
-            Set<ClassEntity> classEntitySet = new HashSet<>();
-            classEntitySet.add(classs);
-            teacher.setClasses(classEntitySet);
+            Set<Class> classSet = new HashSet<>();
+            classSet.add(classs);
+            teacher.setTeacher_classes(classSet);
             userRepo.save(teacher);
         }
 
-        List<ClassEntity> allClasses = classRepo.findAll();
+        List<Class> allClasses = classRepo.findAll();
         for (int c = 1; c <= 20; c++) {
-            UserEntity student = UserEntity.builder()
+            User student = User.builder()
                     .name("Student " + c)
                     .email("student" + c + "@gmail.com")
                     .password(passwordEncoder.encode("test"+ c))
-                    .role(UserEntity.Role.STUDENT)
+                    .role(User.Role.STUDENT)
                     .build();
             int classnum = new Random().nextInt(1, 5);
-            Set<ClassEntity> studentClasses = new HashSet<>();
+            Set<Class> studentClasses = new HashSet<>();
             while (studentClasses.size() != classnum)
                 studentClasses.add(getRandomElement(allClasses));
 
-            student.setClasses(studentClasses);
+            student.setStudent_classes(studentClasses);
             userRepo.save(student);
         }
 
         for (int c = 1; c <= 20; c++) {
 
-            TestsEntity test = TestsEntity.builder()
-                    .test_name("Test " + c)
+            Tests test = Tests.builder()
+                    .testName("Test " + c)
                     .className(getRandomElement(allClasses))
                     .build();
             testsRepo.save(test);
         }
 
-        List<UserEntity> allUsers = userRepo.findAllByRole(UserEntity.Role.STUDENT).orElse(null);
+        List<User> allUsers = userRepo.findAllByRole(User.Role.STUDENT);
         Random rand = new Random();
         allUsers.forEach(val -> {
 
-            List<String> classes = userRepo.findClassNamesByUser_id(val.getId()).orElse(null);
-            List<ClassEntity> cl = classRepo.findByClassNameIn(classes).orElse(null);
-            List<TestsEntity> tests = testsRepo.findAllByClassNameIn(cl).orElse(null);
+            List<Class> classes = classRepo.findClassByStudents(val);
+            List<Tests> tests = testsRepo.findAllByClassNameIn(classes);
 
             tests.forEach(test -> {
-                StudentTestEntity st = StudentTestEntity.builder()
+                StudentTest st = StudentTest.builder()
                         .test(test)
-                        .user(val)
+                        .student(val)
                         .score(rand.nextInt(1, 101))
                         .build();
                 studentTestsRepo.save(st);
