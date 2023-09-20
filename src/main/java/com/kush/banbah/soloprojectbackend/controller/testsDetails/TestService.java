@@ -3,20 +3,17 @@ package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTest;
-import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTestsRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.Tests;
-import com.kush.banbah.soloprojectbackend.database.studentTest.TestsRepo;
+import com.kush.banbah.soloprojectbackend.database.studentTest.*;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -40,7 +37,7 @@ public class TestService {
             throw new UserDoesNotBelongToClassException("User " + user.getName() + " does not belong to " + className);
 
 
-        List<Tests> tests = testsRepo.findByClassName(aClass);
+        List<Tests> tests = testsRepo.findByBelongsToClass(aClass);
 
         List<StudentTest> studentTestEntities = studentTestsRepo.findAllByStudentAndTest(user, tests);
         List<StudentTestResponse> responseMap = new ArrayList<>();
@@ -63,7 +60,7 @@ public class TestService {
         if (aClass.getTeacher().getId() != user.getId())
             throw new NotTeacherOfClassException(user.getName() + " does not teach " + aClass.getClassName());
 
-        List<Tests> tests = testsRepo.findByClassName(aClass);
+        List<Tests> tests = testsRepo.findByBelongsToClass(aClass);
 
 
         ObjectMapper mapper = new ObjectMapper();
@@ -76,28 +73,29 @@ public class TestService {
         User user = (User) auth.getPrincipal();
 
 
-        Class aClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
-        if (aClass.getTeacher().getId() != user.getId())
-            throw new NotTeacherOfClassException(user.getName() + " does not teach " + aClass.getClassName());
+        Class requestClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
+        if (requestClass.getTeacher().getId() != user.getId())
+            throw new NotTeacherOfClassException(user.getName() + " does not teach " + requestClass.getClassName());
 
 
         Tests test = testsRepo.findByTestName(testName).orElseThrow(() -> new TestNotFoundException("Test of " + testName + " does not exist"));
-        System.out.println(test);
 
 
-        if (!test.getClassName().getClassName().equals(aClass.getClassName()))
+
+        if (!test.getBelongsToClass().getClassName().equals(requestClass.getClassName()))
             throw new TestDoesNotBelongToClassException("Test " + testName + " does not belong to class " + className);
 
-//        List<UserEntity> students = userRepo.findByClassesAndRoleIs(classEntity, UserEntity.Role.STUDENT).orElseThrow(NullPointerException::new);
-//
-//        students.forEach(System.out::println);
-//
-//        ;
-//
-//        studentTestsRepo.findAllStudentTestByTest(students.stream().mapToInt(UserEntity::getId).toArray(),test.getId()).orElse(null).forEach(System.out::println);
+        List<Object[]> queryResponses = studentTestsRepo.findAllStudentTestByTest(className,test.getTest_id());
 
-        return "";
-//        List<StudentTestEntity> testsTaken = studentTestsRepo.findAllByTest(test);
+
+        List<TeacherTestResponse> responses = queryResponses.stream()
+                .map(val -> new TeacherTestResponse(userRepo.findById((int) val[1]).orElseThrow(NullPointerException::new).getName(), (long) val[0]))
+                .toList();
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.valueToTree(responses).toString();
+
 
 
     }
