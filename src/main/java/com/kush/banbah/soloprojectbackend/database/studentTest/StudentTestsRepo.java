@@ -14,10 +14,11 @@ public interface StudentTestsRepo extends JpaRepository<StudentTest, UserTestId>
     @Query(value = "SELECT st FROM StudentTest as st where st.student=:student AND st.test in :tests" )
     List<StudentTest> findAllByStudentAndTest(@Param("student") User student, @Param("tests") List<Tests> test);
 
-//    @Query(value =
-//            "SELECT score, u.user_id " +
-//            "FROM user_test st" +
-//            "RIGHT JOIN :students u" +
-//            "ON u.user_id=st.user_id AND st.test_id=:test_id", nativeQuery = true)
-//    Optional<List<String>> findAllStudentTestByTest(@Param("students") int[] students, @Param("test_id") int test_id);
+    @Query(value =
+            "SELECT  COALESCE(score, -1) as score, u.student_id " +
+                    "FROM user_test st " +
+                    "RIGHT JOIN (SELECT student_id from student_classes where class_name=:classname) u " +
+                    "ON u.student_id=st.student_id AND test_id=:test_id", nativeQuery = true)
+    List<Object[]> findAllStudentTestByTest(@Param("classname") String classname , @Param("test_id") int test_id);
+
 }
