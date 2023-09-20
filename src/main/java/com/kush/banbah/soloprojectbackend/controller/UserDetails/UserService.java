@@ -32,7 +32,7 @@ public class UserService {
             classes= classRepo.findClassByTeacher(loggedUser);
 
 
-        String[] classNames = (String[]) classes.stream().map(Class::getClassName).toArray();
+        String[] classNames = classes.stream().map(Class::getClassName).toArray(String[]::new);
 
         Map<String, Object> objectMap = new HashMap<>();
         objectMap.put("classes", classNames);
