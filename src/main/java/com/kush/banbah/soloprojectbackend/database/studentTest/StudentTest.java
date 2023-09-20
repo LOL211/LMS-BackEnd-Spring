@@ -1,7 +1,7 @@
 package com.kush.banbah.soloprojectbackend.database.studentTest;
 
 
-import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
+import com.kush.banbah.soloprojectbackend.database.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -20,16 +20,16 @@ import java.io.Serializable;
 @Entity
 @Table(name = "user_test")
 @IdClass(UserTestId.class)
-public class StudentTestEntity {
+public class StudentTest {
 
     @Id
     @ManyToOne
     @JoinColumn(name = "test_id")
-    private TestsEntity test;
+    private Tests test;
     @Id
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @JoinColumn(name = "student_id")
+    private User student;
     @NotNull
     @Max(100)
     @Min(0)
@@ -40,6 +40,6 @@ public class StudentTestEntity {
 @NoArgsConstructor
 @AllArgsConstructor
 class UserTestId implements Serializable {
-    private UserEntity user;
-    private TestsEntity test;
+    private User student;
+    private Tests test;
 }
