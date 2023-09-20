@@ -1,15 +1,20 @@
 package com.kush.banbah.soloprojectbackend.database.classes;
 
+import com.kush.banbah.soloprojectbackend.database.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ClassRepo extends JpaRepository<ClassEntity, String> {
+public interface ClassRepo extends JpaRepository<Class, String> {
 
-    Optional<ClassEntity> findByClassName(String className);
+    Optional<Class> findByClassName(String className);
 
-    Optional<List<ClassEntity>> findByClassNameIn(List<String> classList);
+    List<Class> findByClassNameIn(List<String> classList);
+
+    List<Class> findClassByStudents(User student);
+
+    List<Class> findClassByTeacher(User teacher);
 
 
 }
