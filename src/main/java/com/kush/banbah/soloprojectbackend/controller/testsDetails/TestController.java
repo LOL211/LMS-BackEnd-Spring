@@ -1,7 +1,6 @@
 package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 
-import com.kush.banbah.soloprojectbackend.exceptions.ClassDoesNotExistException;
-import com.kush.banbah.soloprojectbackend.exceptions.UserDoesNotBelongToClassException;
+import com.kush.banbah.soloprojectbackend.exceptions.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,12 +17,12 @@ public class TestController {
 
     private final TestService testService;
 
-    @GetMapping("/student/{classname}")
-    public ResponseEntity<String> studentRequest(@PathVariable String classname, Authentication auth) {
+    @GetMapping("/student/{className}")
+    public ResponseEntity<String> studentRequest(@PathVariable String className, Authentication auth) {
         try {
             return ResponseEntity
                     .status(200)
-                    .body(testService.getStudentScores(classname, auth));
+                    .body(testService.getStudentScores(className, auth));
         } catch (UsernameNotFoundException e) {
             return ResponseEntity
                     .status(500)
@@ -31,23 +30,51 @@ public class TestController {
         } catch (ClassDoesNotExistException e) {
             return ResponseEntity
                     .status(404)
-                    .body("Classname not found");
+                    .body(e.getMessage());
         } catch (UserDoesNotBelongToClassException e) {
             return ResponseEntity
                     .status(403)
-                    .body("User is not allowed to access " + classname);
+                    .body(e.getMessage());
         }
 
     }
 
-    @GetMapping("/teacher/{classname}")
-    public ResponseEntity<String> teacherRequest(@PathVariable String classname) {
-        return ResponseEntity.ok(classname);
+    @GetMapping("/teacher/{className}")
+    public ResponseEntity<String> teacherRequest(@PathVariable String className, Authentication auth) {
+
+        try {
+            return ResponseEntity
+                    .status(200)
+                    .body(testService.getTeacherTests(className,auth));
+        } catch (ClassDoesNotExistException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        } catch (NotTeacherOfClassException e) {
+            return ResponseEntity
+                    .status(403)
+                    .body(e.getMessage());
+        }
     }
-//    @GetMapping("/{classname}")
-//    @PreAuthorize("hasAnyAuthority('TEACHER')")
-//    public ResponseEntity<String> teacherRequest(@PathVariable String className)
-//    {
-//        return ResponseEntity.ok(className+" hi");
-//    }
+
+    @GetMapping("/teacher/{className}/{testName}")
+    public ResponseEntity<String> teacherRequestTest(@PathVariable String className,@PathVariable String testName, Authentication auth) {
+
+        try {
+            return ResponseEntity
+                    .status(200)
+                    .body(testService.getTeacherStudentScores(className,testName, auth));
+        } catch (ClassDoesNotExistException | TestNotFoundException e) {
+            return ResponseEntity
+                    .status(404)
+                    .body(e.getMessage());
+        } catch (NotTeacherOfClassException | TestDoesNotBelongToClassException e) {
+            return ResponseEntity
+                    .status(403)
+                    .body(e.getMessage());
+        }
+    }
+
+
+
 }
