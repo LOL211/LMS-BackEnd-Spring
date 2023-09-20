@@ -2,7 +2,7 @@ package com.kush.banbah.soloprojectbackend.auth;
 
 
 import com.kush.banbah.soloprojectbackend.config.JwtService;
-import com.kush.banbah.soloprojectbackend.database.user.UserEntity;
+import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +42,7 @@ public class AuthenticationService {
                 )
         );
 
-        UserEntity user = repo.findByEmail(authRequest.getEmail()).orElseThrow();
+        User user = repo.findByEmail(authRequest.getEmail()).orElseThrow();
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
