@@ -1,15 +1,16 @@
 package com.kush.banbah.soloprojectbackend.database.studentTest;
 
 
-import com.kush.banbah.soloprojectbackend.database.classes.ClassEntity;
+import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface TestsRepo extends JpaRepository<TestsEntity, Integer> {
-    Optional<List<TestsEntity>> findByClassName(ClassEntity classEntity);
+public interface TestsRepo extends JpaRepository<Tests, Integer> {
+    List<Tests> findByClassName(Class aClass);
 
-    Optional<List<TestsEntity>> findAllByClassNameIn(List<ClassEntity> classList);
+    List<Tests> findAllByClassNameIn(List<Class> classList);
 
+    Optional<Tests> findByTestName(String testName);
 }
