@@ -1,13 +1,17 @@
 package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 
+import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.CreateTestRequest;
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.ScoreUpdateRequest;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @AllArgsConstructor
@@ -46,21 +50,31 @@ public class TestController {
     }
 
     @PostMapping("/teacher/{className}/{testName}/{studentID}")
-    public ResponseEntity<String> teacherUpdateGrade(@PathVariable String className, @PathVariable String testName, @PathVariable int studentID, Authentication auth, @RequestBody ScoreUpdateRequest newScore) throws NotTeacherOfClassException, ClassDoesNotExistException, TestNotFoundException, UserDoesNotBelongToClassException, TestDoesNotBelongToClassException {
+    public ResponseEntity<String> teacherUpdateGrade(@PathVariable String className, @PathVariable String testName, @PathVariable int studentID, Authentication auth, @Valid @RequestBody ScoreUpdateRequest newScore) throws NotTeacherOfClassException, ClassDoesNotExistException, TestNotFoundException, UserDoesNotBelongToClassException, TestDoesNotBelongToClassException {
 
         try {
             User student = testService.updateGrade(className, testName, studentID, auth, newScore);
             return ResponseEntity
                     .status(200)
                     .body("Updated " + testName + " score for Student " + student.getName());
-        }
-        catch (UsernameNotFoundException e) {
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity
                     .status(404)
                     .body(e.getMessage());
         }
+    }
+        @PostMapping("/teacher/{className}")
+        public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws NotTeacherOfClassException, ClassDoesNotExistException, InvalidTestNameException {
 
+
+            testService.createTest(className, auth, createTest.getNewTestName());
+
+
+            return ResponseEntity
+                    .status(201)
+                    .body("Created Test "+createTest.getNewTestName()+" for class "+className);
+        }
 
     }
 
-}
+
