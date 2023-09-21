@@ -13,13 +13,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "test")
+@Table(name = "test",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"test_name", "class_name"}))
 public class Tests {
 
     @Id
     @GeneratedValue
     private int test_id;
     @NotNull
+
     @Column(name = "test_name")
     private String testName;
 
