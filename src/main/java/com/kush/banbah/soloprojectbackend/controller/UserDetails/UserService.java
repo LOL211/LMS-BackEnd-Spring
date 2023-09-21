@@ -19,7 +19,7 @@ public class UserService {
 
     private ClassRepo classRepo;
 
-    public String retrieveUserDetails(Authentication auth) throws NullPointerException, ClassCastException, JsonProcessingException {
+    public String retrieveUserDetails(Authentication auth) {
 
         ObjectMapper mapper = new ObjectMapper();
         User loggedUser = (User) auth.getPrincipal();
@@ -40,7 +40,7 @@ public class UserService {
         objectMap.put("role", loggedUser.getRole());
 
 
-        return mapper.writeValueAsString(objectMap);
+        return mapper.valueToTree(objectMap).toString();
 
 
     }
