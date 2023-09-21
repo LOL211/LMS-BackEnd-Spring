@@ -1,17 +1,18 @@
 package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.ScoreUpdateRequest;
+import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.StudentTestResponse;
+import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.TeacherTestResponse;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTest;
-import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTestsRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.Tests;
-import com.kush.banbah.soloprojectbackend.database.studentTest.TestsRepo;
+import com.kush.banbah.soloprojectbackend.database.studentTest.*;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class TestService {
 
         List<Tests> tests = testsRepo.findByBelongsToClass(aClass);
 
-        List<StudentTest> studentTestEntities = studentTestsRepo.findAllByStudentAndTest(user, tests);
+        List<StudentTest> studentTestEntities = studentTestsRepo.findAllByStudentAndTests(user, tests);
         List<StudentTestResponse> responseMap = new ArrayList<>();
 
         studentTestEntities.forEach(val ->
@@ -76,7 +77,7 @@ public class TestService {
 
 
         Class requestClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
-        if (requestClass.getTeacher().getId() != user.getId())
+        if (requestClass.getTeacher().getId()!=user.getId())
             throw new NotTeacherOfClassException(user.getName() + " does not teach " + requestClass.getClassName());
 
 
@@ -90,7 +91,7 @@ public class TestService {
 
 
         List<TeacherTestResponse> responses = queryResponses.stream()
-                .map(val -> new TeacherTestResponse(userRepo.findById((int) val[1]).orElseThrow(NullPointerException::new).getName(), (long) val[0]))
+                .map(val -> new TeacherTestResponse(userRepo.findById((int) val[1]).orElseThrow(NullPointerException::new).getName(), (long) val[0], (int) val[1]))
                 .toList();
 
 
@@ -99,4 +100,34 @@ public class TestService {
 
 
     }
+
+    public User updateGrade(String className, String testName,int studentID, Authentication auth, ScoreUpdateRequest newScore) throws ClassDoesNotExistException, TestNotFoundException, NotTeacherOfClassException, UsernameNotFoundException, UserDoesNotBelongToClassException, TestDoesNotBelongToClassException {
+
+        User teacher = (User) auth.getPrincipal();
+
+        User student = userRepo.findById(studentID).orElseThrow(()->new UsernameNotFoundException("Student of ID "+studentID+" does not exist"));
+
+        Class requestClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+
+        Tests test = testsRepo.findByTestName(testName).orElseThrow(() -> new TestNotFoundException("Test of " + testName + " does not exist"));
+
+        List<Class> classList = classRepo.findClassByStudents(student);
+
+        if (requestClass.getTeacher().getId()!=teacher.getId())
+            throw new NotTeacherOfClassException(teacher.getName() + " does not teach " + requestClass.getClassName());
+
+        if (!test.getBelongsToClass().getClassName().equals(requestClass.getClassName()))
+            throw new TestDoesNotBelongToClassException("Test " + testName + " does not belong to class " + className);
+
+        if (!classList.contains(requestClass))
+            throw new UserDoesNotBelongToClassException("Student " + student.getName() + " does not belong to " + className);
+
+        StudentTest updateTest = studentTestsRepo.findByStudentAndTest(student,test).orElse(StudentTest.builder().student(student).test(test).score(0).build());
+
+        updateTest.setScore(Integer.parseInt(newScore.getNewScore()));
+
+        studentTestsRepo.saveAndFlush(updateTest);
+        return student;
+    }
+
 }

@@ -6,12 +6,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentTestsRepo extends JpaRepository<StudentTest, UserTestId> {
 
 
     @Query(value = "SELECT st FROM StudentTest as st where st.student=:student AND st.test in :tests")
-    List<StudentTest> findAllByStudentAndTest(@Param("student") User student, @Param("tests") List<Tests> test);
+    List<StudentTest> findAllByStudentAndTests(@Param("student") User student, @Param("tests") List<Tests> test);
+
+    Optional<StudentTest> findByStudentAndTest(User student, Tests test);
+
 
     @Query(value =
             "SELECT  COALESCE(score, -1) as score, u.student_id " +
