@@ -19,34 +19,15 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
 
-//    @PostMapping("/register")
-//    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest registerRequest) {
-//        return ResponseEntity.ok(service.register(registerRequest));
-//    }
-
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest authRequest) {
-        try {
+
             return ResponseEntity
                     .status(200)
                     .body(service.authenticate(authRequest));
-        } catch (AuthenticationException e) {
-            return ResponseEntity
-                    .status(403)
-                    .body(new AuthenticationResponse(""));
 
-        }
 
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", new Date());
-        body.put("status", HttpStatus.BAD_REQUEST);
-        List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().forEach(val -> errors.add(val.getDefaultMessage()));
-        body.put("errors", errors);
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-    }
+
 }
