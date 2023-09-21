@@ -31,8 +31,8 @@ public class StudentTest {
     @JoinColumn(name = "student_id")
     private User student;
     @NotNull
-    @Max(100)
-    @Min(0)
+    @Max(value = 100, message = "Score cannot be greater than 100!")
+    @Min(value = 0, message = "Score cannot be less than 0!")
     private int score;
 }
 
