@@ -11,6 +11,7 @@ import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -130,4 +131,25 @@ public class TestService {
         return student;
     }
 
+    public void createTest(String className, Authentication auth, String newTestName) throws ClassDoesNotExistException, NotTeacherOfClassException, InvalidTestNameException {
+        User teacher = (User) auth.getPrincipal();
+
+        Class requestClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+
+        if (requestClass.getTeacher().getId()!=teacher.getId())
+            throw new NotTeacherOfClassException(teacher.getName() + " does not teach " + requestClass.getClassName());
+            try{
+                Tests addTest = Tests.builder()
+                        .testName(newTestName)
+                        .belongsToClass(requestClass)
+                        .build();
+                testsRepo.saveAndFlush(addTest);
+            }catch(DataIntegrityViolationException e)
+            {
+                throw new InvalidTestNameException("Test "+newTestName+" already exists in class "+className);
+            }
+
+
+
+    }
 }
