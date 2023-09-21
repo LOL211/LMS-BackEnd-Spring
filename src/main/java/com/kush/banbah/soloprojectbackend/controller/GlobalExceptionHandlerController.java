@@ -1,5 +1,6 @@
 package com.kush.banbah.soloprojectbackend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kush.banbah.soloprojectbackend.auth.AuthenticationResponse;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
 import jakarta.validation.ConstraintViolation;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,14 @@ public class GlobalExceptionHandlerController {
                 .status(400)
                 .body(body);
 
+    }
+
+    @ExceptionHandler(InvalidTestNameException.class)
+    public ResponseEntity<Object> handleInvalidTestNameException(InvalidTestNameException ex) {
+
+        return ResponseEntity
+                .status(400)
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -56,15 +66,17 @@ public class GlobalExceptionHandlerController {
     public ResponseEntity<String> handleNotFoundExceptions(Exception ex) {
         return ResponseEntity
                 .status(404)
-                .body("{error:"+ex.getMessage()+"}");
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler({NotTeacherOfClassException.class, TestDoesNotBelongToClassException.class, UserDoesNotBelongToClassException.class})
     public ResponseEntity<String> handleForbiddenExceptions(Exception ex) {
         return ResponseEntity
                 .status(403)
-                .body("{error:"+ex.getMessage()+"}");
+                .body(ex.getMessage());
     }
+
+
 
 
 
