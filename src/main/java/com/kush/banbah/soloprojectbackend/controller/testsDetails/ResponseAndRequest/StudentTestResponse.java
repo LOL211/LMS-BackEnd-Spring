@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.controller.testsDetails;
+package com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
