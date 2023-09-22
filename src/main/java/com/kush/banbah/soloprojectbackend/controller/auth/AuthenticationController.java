@@ -1,6 +1,8 @@
 package com.kush.banbah.soloprojectbackend.controller.auth;
 
 
+import com.kush.banbah.soloprojectbackend.controller.auth.RequestAndResponse.AuthenticationRequest;
+import com.kush.banbah.soloprojectbackend.controller.auth.RequestAndResponse.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

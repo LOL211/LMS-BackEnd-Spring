@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.controller.auth;
+package com.kush.banbah.soloprojectbackend.controller.auth.RequestAndResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
