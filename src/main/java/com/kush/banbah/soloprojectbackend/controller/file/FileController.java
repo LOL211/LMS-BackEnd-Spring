@@ -2,15 +2,13 @@ package com.kush.banbah.soloprojectbackend.controller.file;
 
 
 import com.kush.banbah.soloprojectbackend.controller.file.ResponseAndRequest.FileListResponse;
-import com.kush.banbah.soloprojectbackend.database.StoredFiles.StoredFile;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
 import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestException;
-import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.FileIsEmptyException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.UserDoesNotBelongToClassException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.ClassDoesNotExistException;
-import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.FileNotExistException;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 @AllArgsConstructor
@@ -39,6 +36,16 @@ public class FileController {
 
     }
 
+    @DeleteMapping ("/teacher/{className}/{fileName}")
+    public ResponseEntity<String> deleteFile(@PathVariable String className, @PathVariable String fileName, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException, IOException {
+
+        storageService.delete(className, auth, fileName);
+        return ResponseEntity
+                .status(200)
+                .body("File deleted!");
+
+    }
+
     @GetMapping("/{className}")
     public ResponseEntity<List<FileListResponse>> getListFiles(@PathVariable String className, Authentication auth) throws ClassDoesNotExistException, IOException, UserDoesNotBelongToClassException {
         return ResponseEntity
@@ -46,13 +53,13 @@ public class FileController {
                 .body(storageService.getAllFiles(className,auth));
     }
 
-    @GetMapping("/files/{id}")
-    public ResponseEntity<String> getFile(@PathVariable String id) throws FileNotExistException {
-//        StoredFile file = storageService.getFile(Integer.parseInt(id));
+    @GetMapping("/{className}/{fileName}")
+    public ResponseEntity<Resource> getFile(@PathVariable String className, @PathVariable String fileName, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException, IOException {
+
 
         return ResponseEntity
                 .status(200)
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
-                .body("test");
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(storageService.loadFile(className,fileName, auth));
     }
 }

@@ -2,7 +2,6 @@ package com.kush.banbah.soloprojectbackend.controller.file;
 
 
 import com.kush.banbah.soloprojectbackend.controller.file.ResponseAndRequest.FileListResponse;
-import com.kush.banbah.soloprojectbackend.database.StoredFiles.StoredFile;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
@@ -15,6 +14,8 @@ import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.
 import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.ClassDoesNotExistException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.FileNotExistException;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,16 +42,7 @@ public class FileService {
 
     public void store(String className, Authentication auth, MultipartFile file) throws IOException, InvalidRequestException, EntityNotFoundException, EntityDoesNotBelongException {
 
-        User loggedUser = (User) auth.getPrincipal();
-
-        Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
-
-
-
-        if(requestedClass.getTeacher().getId()!=loggedUser.getId())
-            throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
-
-
+        verifyUser(className,auth);
 
         if (file.isEmpty())
                 throw new FileIsEmptyException("File is empty!");
@@ -72,25 +65,11 @@ public class FileService {
 
     }
 
-    public StoredFile getFile(int fileID) throws FileNotExistException {
-        return null;
-    }
+
 
     public List<FileListResponse> getAllFiles(String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException, IOException {
-        User loggedUser = (User) auth.getPrincipal();
+        Path classPath = verifyUser(className, auth);
 
-        Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
-
-        if(loggedUser.getRole()== User.Role.STUDENT)
-        {
-
-            if(classRepo.findClassByStudents(loggedUser).contains(requestedClass))
-                throw new UserDoesNotBelongToClassException("Student "+loggedUser.getName()+" is not in "+className);
-        }
-        else if(requestedClass.getTeacher().getId()!=loggedUser.getId())
-                throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
-
-        Path classPath = Path.of(rootLocation.toString(),className);
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy, hh:mma");
 
         return Files.walk(classPath, 1)
@@ -114,5 +93,72 @@ public class FileService {
 
 
 
+    }
+
+    private Path verifyUser(String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException {
+        User loggedUser = (User) auth.getPrincipal();
+
+        Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+
+        if(loggedUser.getRole()== User.Role.STUDENT)
+        {
+
+            if(classRepo.findClassByStudents(loggedUser).contains(requestedClass))
+                throw new UserDoesNotBelongToClassException("Student "+loggedUser.getName()+" is not in "+className);
+        }
+        else if(requestedClass.getTeacher().getId()!=loggedUser.getId())
+                throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
+
+        Path classPath = Path.of(rootLocation.toString(),className);
+        return classPath;
+    }
+
+    public void delete(String className, Authentication auth, String fileName) throws EntityNotFoundException, EntityDoesNotBelongException, IOException {
+
+        User loggedUser = (User) auth.getPrincipal();
+
+        Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+
+
+
+        if(requestedClass.getTeacher().getId()!=loggedUser.getId())
+            throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
+
+
+
+        Path destinationFile = this.rootLocation
+                .resolve(Paths.get(className, fileName))
+                .normalize().toAbsolutePath();
+
+
+        if(!Files.exists(destinationFile))
+            throw new FileNotExistException("File "+fileName+" does not exist");
+
+        Files.delete(destinationFile);
+
+    }
+
+    public Resource loadFile(String className, String fileName, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException, IOException {
+
+        Path classPath = verifyUser(className, auth);
+
+        classPath = classPath.resolve(fileName);
+
+        if(!Files.exists(classPath)){
+            throw new FileNotExistException("File "+fileName+" in class "+className+" does not exist");
+        }
+
+        try {
+            Resource resource = new UrlResource(classPath.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            }
+            else {
+                throw new IOException("Could not access file");
+            }
+        }
+        catch (MalformedURLException e) {
+            throw new IOException("Could not access file");
+        }
     }
 }
