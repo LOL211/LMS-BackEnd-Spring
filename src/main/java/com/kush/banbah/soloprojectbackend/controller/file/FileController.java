@@ -40,20 +40,10 @@ public class FileController {
     }
 
     @GetMapping("/{className}")
-    public ResponseEntity<String> getListFiles(@PathVariable String className, Authentication auth) throws ClassDoesNotExistException, IOException, UserDoesNotBelongToClassException {
-
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy, hh:mma");
-        storageService.getAllFiles(className,auth);
-//        List<FileListResponse> files = storageService.getAllFiles(className, auth).stream().map(file ->
-//                FileListResponse.builder()
-//                        .fileName(file.getFileName())
-//                        .fileType(file.getType())
-//                        .fileUploadDate(formatter.format(file.getUploadDate()))
-//                        .build()).toList();
-
+    public ResponseEntity<List<FileListResponse>> getListFiles(@PathVariable String className, Authentication auth) throws ClassDoesNotExistException, IOException, UserDoesNotBelongToClassException {
         return ResponseEntity
                 .status(200)
-                .body("good scence");
+                .body(storageService.getAllFiles(className,auth));
     }
 
     @GetMapping("/files/{id}")

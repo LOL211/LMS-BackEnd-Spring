@@ -14,5 +14,5 @@ public class FileListResponse {
     private String fileName;
     private long fileSize;
     private String fileType;
-    private Date fileUploadDate;
+    private String fileUploadDate;
 }

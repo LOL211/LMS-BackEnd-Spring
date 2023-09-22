@@ -1,6 +1,7 @@
 package com.kush.banbah.soloprojectbackend.controller.file;
 
 
+import com.kush.banbah.soloprojectbackend.controller.file.ResponseAndRequest.FileListResponse;
 import com.kush.banbah.soloprojectbackend.database.StoredFiles.StoredFile;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
 import com.kush.banbah.soloprojectbackend.database.user.User;
@@ -24,8 +25,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-
+import java.util.Objects;
 
 
 @Service
@@ -72,7 +76,7 @@ public class FileService {
         return null;
     }
 
-    public List<StoredFile> getAllFiles(String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException, IOException {
+    public List<FileListResponse> getAllFiles(String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException, IOException {
         User loggedUser = (User) auth.getPrincipal();
 
         Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
@@ -87,15 +91,28 @@ public class FileService {
                 throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
 
         Path classPath = Path.of(rootLocation.toString(),className);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM, yyyy, hh:mma");
 
-        Files.walk(classPath, 1)
-                    .filter(path -> !path.equals(classPath))
-                    .map(classPath::relativize)
-                    .map(Path::toString)
-                    .forEach(System.out::println);
+        return Files.walk(classPath, 1)
+                .filter(path -> !path.equals(classPath))
+                .map(path -> {
+                    try {
+                        System.out.println(path.getFileName());
+                        return FileListResponse.builder()
+                                .fileName(path.getFileName().toString())
+                                .fileType(Files.probeContentType(path))
+                                .fileSize(Files.size(path))
+                                .fileUploadDate(formatter.format(new Date(Files.readAttributes(path, BasicFileAttributes.class).creationTime().toMillis())))
+                                .build();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
 
 
-        return null;
 
     }
 }
