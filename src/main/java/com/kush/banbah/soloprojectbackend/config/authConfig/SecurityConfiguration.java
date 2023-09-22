@@ -28,6 +28,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/api/v1/test/student/**").hasAuthority("STUDENT")
                         .requestMatchers("/api/v1/test/teacher/**").hasAuthority("TEACHER")
+                        .requestMatchers("/api/v1/file/teacher/**").hasAuthority("TEACHER")
                         .anyRequest().authenticated()
                     )
                     .sessionManagement(sess -> sess
