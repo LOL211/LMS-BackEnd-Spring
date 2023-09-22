@@ -4,6 +4,7 @@ import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndReq
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.ScoreUpdateRequest;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.InvalidTestNameException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public class TestController {
         }
     }
         @PostMapping("/teacher/{className}")
-        public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws EntityNotFoundException,EntityDoesNotBelongException, InvalidTestNameException {
+        public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws EntityNotFoundException, InvalidRequestException, EntityDoesNotBelongException {
 
 
             testService.createTest(className, auth, createTest.getNewTestName());

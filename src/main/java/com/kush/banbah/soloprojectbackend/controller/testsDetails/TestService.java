@@ -10,6 +10,7 @@ import com.kush.banbah.soloprojectbackend.database.studentTest.*;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.InvalidTestNameException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.TestDoesNotBelongToClassException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.UserDoesNotBelongToClassException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.ClassDoesNotExistException;
@@ -135,7 +136,7 @@ public class TestService {
         return student;
     }
 
-    public void createTest(String className, Authentication auth, String newTestName) throws EntityDoesNotBelongException, EntityNotFoundException, InvalidTestNameException {
+    public void createTest(String className, Authentication auth, String newTestName) throws EntityDoesNotBelongException, EntityNotFoundException, InvalidRequestException {
         User teacher = (User) auth.getPrincipal();
 
         Class requestClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
