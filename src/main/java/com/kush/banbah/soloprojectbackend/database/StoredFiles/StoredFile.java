@@ -7,15 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class StoredFile {
 
-    private String name;
+    private String fileName;
     private String type;
     private Class owningClass;
+    private Date uploadDate;
 
 
 
