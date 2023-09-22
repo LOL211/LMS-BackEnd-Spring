@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface StudentTestsRepo extends JpaRepository<StudentTest, UserTestId> {
+public interface StudentTestsRepo extends JpaRepository<StudentTest, StudentTestId> {
 
 
     @Query(value = "SELECT st FROM StudentTest as st where st.student=:student AND st.test in :tests")
@@ -19,7 +19,7 @@ public interface StudentTestsRepo extends JpaRepository<StudentTest, UserTestId>
 
     @Query(value =
             "SELECT  COALESCE(score, -1) as score, u.student_id " +
-                    "FROM user_test st " +
+                    "FROM student_tests st " +
                     "RIGHT JOIN (SELECT student_id from student_classes where class_name=:classname) u " +
                     "ON u.student_id=st.student_id AND test_id=:test_id", nativeQuery = true)
     List<Object[]> findAllStudentTestByTest(@Param("classname") String classname, @Param("test_id") int test_id);

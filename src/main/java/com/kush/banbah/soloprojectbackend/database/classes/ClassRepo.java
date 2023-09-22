@@ -10,8 +10,6 @@ public interface ClassRepo extends JpaRepository<Class, String> {
 
     Optional<Class> findByClassName(String className);
 
-    List<Class> findByClassNameIn(List<String> classList);
-
     List<Class> findClassByStudents(User student);
 
     List<Class> findClassByTeacher(User teacher);

@@ -18,8 +18,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user_test")
-@IdClass(UserTestId.class)
+@Table(name = "student_tests")
+@IdClass(StudentTestId.class)
 public class StudentTest {
 
     @Id
@@ -39,7 +39,7 @@ public class StudentTest {
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-class UserTestId implements Serializable {
+class StudentTestId implements Serializable {
     private User student;
     private Tests test;
 }
