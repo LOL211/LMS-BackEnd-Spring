@@ -10,6 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,6 +76,11 @@ public class GlobalExceptionHandlerController {
                 .status(403)
                 .body(ex.getMessage());
     }
-
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxSizeException(Exception ex) {
+        return ResponseEntity
+                .status(413)
+                .body("File is too large!");
+    }
 
 }
