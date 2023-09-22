@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,7 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
+    public ResponseEntity<Object> handleAuthenticationException(Exception e) {
 
         return ResponseEntity
                 .status(403)
@@ -83,5 +84,13 @@ public class GlobalExceptionHandlerController {
                 .status(413)
                 .body("File is too large!");
     }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleIOException(Exception ex) {
+        return ResponseEntity
+                .status(500)
+                .body("Error when accessing file system!");
+    }
+
 
 }
