@@ -1,8 +1,8 @@
 package com.kush.banbah.soloprojectbackend.controller;
 
-import com.kush.banbah.soloprojectbackend.exceptions.*;
-
-import io.jsonwebtoken.ExpiredJwtException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidTestNameException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -25,7 +28,7 @@ public class GlobalExceptionHandlerController {
         ex.getBindingResult().getAllErrors().forEach(val -> errors.add(val.getDefaultMessage()));
         body.put("errors", errors);
 
-        return  ResponseEntity
+        return ResponseEntity
                 .status(400)
                 .body(body);
 
@@ -46,14 +49,13 @@ public class GlobalExceptionHandlerController {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining(", "));
 
-        return  ResponseEntity
+        return ResponseEntity
                 .status(400)
                 .body(errorMessage);
     }
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e)
-    {
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException e) {
 
         return ResponseEntity
                 .status(403)
@@ -73,16 +75,6 @@ public class GlobalExceptionHandlerController {
                 .status(403)
                 .body(ex.getMessage());
     }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<String> handleExpiredTokenException(Exception ex) {
-        return ResponseEntity
-                .status(403)
-                .body("Authorization Token is expired");
-    }
-
-
-
 
 
 }
