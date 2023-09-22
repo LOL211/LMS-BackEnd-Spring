@@ -14,10 +14,10 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -28,7 +28,7 @@ public class DatabaseValueLoader implements ApplicationRunner {
     private final TestsRepo testsRepo;
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
-
+    private final Path rootLocation;
     @Override
     public void run(ApplicationArguments args) {
 
@@ -48,6 +48,29 @@ public class DatabaseValueLoader implements ApplicationRunner {
             classRepo.save(classs);
             Set<Class> classSet = new HashSet<>();
             classSet.add(classs);
+
+            Path classPath = Path.of(rootLocation.toString(), classs.getClassName());
+            try{
+                if (Files.exists(classPath))
+                        Files.walk(classPath)
+                                .sorted(Comparator.reverseOrder())
+                                .forEach(val->{
+                            try {
+                                Files.delete(val);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                System.out.println("IO Error inside");
+                            }
+                        });
+                Files.createDirectories(classPath);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+                System.out.println("IO Error outside");
+            }
+
+
+
             teacher.setTeacher_classes(classSet);
             userRepo.save(teacher);
         }
