@@ -2,9 +2,9 @@ package com.kush.banbah.soloprojectbackend.controller.file;
 
 
 import com.kush.banbah.soloprojectbackend.controller.file.ResponseAndRequest.FileListResponse;
+import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
 import com.kush.banbah.soloprojectbackend.database.user.User;
-import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
 import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestException;
@@ -14,16 +14,12 @@ import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.
 import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.ClassDoesNotExistException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityNotFound.FileNotExistException;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,29 +38,26 @@ public class FileService {
 
     public void store(String className, Authentication auth, MultipartFile file) throws IOException, InvalidRequestException, EntityNotFoundException, EntityDoesNotBelongException {
 
-        verifyUser(className,auth);
+        verifyUser(className, auth);
 
         if (file.isEmpty())
-                throw new FileIsEmptyException("File is empty!");
+            throw new FileIsEmptyException("File is empty!");
 
-            Path destinationFile = this.rootLocation
-                                    .resolve(Paths.get(className, file.getOriginalFilename()))
-                                    .normalize().toAbsolutePath();
-
-
-            if(Files.exists(destinationFile))
-                throw new FileAlreadyExistsException("File "+file.getOriginalFilename()+" already exists");
+        Path destinationFile = this.rootLocation
+                .resolve(Paths.get(className, file.getOriginalFilename()))
+                .normalize().toAbsolutePath();
 
 
-            InputStream inputStream = file.getInputStream();
-            Files.copy(inputStream, destinationFile);
-            inputStream.close();
+        if (Files.exists(destinationFile))
+            throw new FileAlreadyExistsException("File " + file.getOriginalFilename() + " already exists");
 
 
+        InputStream inputStream = file.getInputStream();
+        Files.copy(inputStream, destinationFile);
+        inputStream.close();
 
 
     }
-
 
 
     public List<FileListResponse> getAllFiles(String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException, IOException {
@@ -92,24 +85,21 @@ public class FileService {
                 .toList();
 
 
-
     }
 
     private Path verifyUser(String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException {
         User loggedUser = (User) auth.getPrincipal();
 
-        Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+        Class requestedClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
 
-        if(loggedUser.getRole()== User.Role.STUDENT)
-        {
+        if (loggedUser.getRole() == User.Role.STUDENT) {
 
-            if(classRepo.findClassByStudents(loggedUser).contains(requestedClass))
-                throw new UserDoesNotBelongToClassException("Student "+loggedUser.getName()+" is not in "+className);
-        }
-        else if(requestedClass.getTeacher().getId()!=loggedUser.getId())
-                throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
+            if (!classRepo.findClassByStudents(loggedUser).contains(requestedClass))
+                throw new UserDoesNotBelongToClassException("Student " + loggedUser.getName() + " is not in " + className);
+        } else if (requestedClass.getTeacher().getId() != loggedUser.getId())
+            throw new UserDoesNotBelongToClassException("Teacher " + loggedUser.getName() + " does not teach " + className);
 
-        Path classPath = Path.of(rootLocation.toString(),className);
+        Path classPath = Path.of(rootLocation.toString(), className);
         return classPath;
     }
 
@@ -117,13 +107,11 @@ public class FileService {
 
         User loggedUser = (User) auth.getPrincipal();
 
-        Class requestedClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+        Class requestedClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
 
 
-
-        if(requestedClass.getTeacher().getId()!=loggedUser.getId())
-            throw new UserDoesNotBelongToClassException("Teacher "+loggedUser.getName()+" does not teach "+className);
-
+        if (requestedClass.getTeacher().getId() != loggedUser.getId())
+            throw new UserDoesNotBelongToClassException("Teacher " + loggedUser.getName() + " does not teach " + className);
 
 
         Path destinationFile = this.rootLocation
@@ -131,34 +119,22 @@ public class FileService {
                 .normalize().toAbsolutePath();
 
 
-        if(!Files.exists(destinationFile))
-            throw new FileNotExistException("File "+fileName+" does not exist");
+        if (!Files.exists(destinationFile))
+            throw new FileNotExistException("File " + fileName + " does not exist");
 
         Files.delete(destinationFile);
 
     }
 
-    public Resource loadFile(String className, String fileName, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException, IOException {
+    public byte[] loadFile(String className, String fileName, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException, IOException {
 
         Path classPath = verifyUser(className, auth);
 
         classPath = classPath.resolve(fileName);
 
-        if(!Files.exists(classPath)){
-            throw new FileNotExistException("File "+fileName+" in class "+className+" does not exist");
+        if (!Files.exists(classPath)) {
+            throw new FileNotExistException("File " + fileName + " in class " + className + " does not exist");
         }
-
-        try {
-            Resource resource = new UrlResource(classPath.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            }
-            else {
-                throw new IOException("Could not access file");
-            }
-        }
-        catch (MalformedURLException e) {
-            throw new IOException("Could not access file");
-        }
+        return Files.readAllBytes(classPath);
     }
 }
