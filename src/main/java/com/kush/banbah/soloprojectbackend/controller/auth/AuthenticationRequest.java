@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.auth;
+package com.kush.banbah.soloprojectbackend.controller.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

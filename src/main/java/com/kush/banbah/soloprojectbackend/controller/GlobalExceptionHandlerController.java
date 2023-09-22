@@ -1,10 +1,8 @@
 package com.kush.banbah.soloprojectbackend.controller;
 
 import com.kush.banbah.soloprojectbackend.exceptions.*;
-import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass.TestDoesNotBelongToClassException;
-import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass.UserDoesNotBelongToClassException;
-import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound.ClassDoesNotExistException;
-import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound.TestNotFoundException;
+
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +72,13 @@ public class GlobalExceptionHandlerController {
         return ResponseEntity
                 .status(403)
                 .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<String> handleExpiredTokenException(Exception ex) {
+        return ResponseEntity
+                .status(403)
+                .body("Authorization Token is expired");
     }
 
 

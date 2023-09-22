@@ -1,15 +1,10 @@
-package com.kush.banbah.soloprojectbackend.auth;
+package com.kush.banbah.soloprojectbackend.controller.auth;
 
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 
 @RestController

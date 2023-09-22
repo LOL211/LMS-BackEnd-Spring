@@ -1,7 +1,7 @@
-package com.kush.banbah.soloprojectbackend.auth;
+package com.kush.banbah.soloprojectbackend.controller.auth;
 
 
-import com.kush.banbah.soloprojectbackend.config.JwtService;
+import com.kush.banbah.soloprojectbackend.authConfig.JwtService;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.RequiredArgsConstructor;

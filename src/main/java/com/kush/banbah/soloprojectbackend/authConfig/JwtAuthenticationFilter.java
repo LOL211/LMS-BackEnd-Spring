@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.config;
+package com.kush.banbah.soloprojectbackend.authConfig;
 
 
 import jakarta.servlet.FilterChain;
