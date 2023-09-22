@@ -2,7 +2,8 @@ package com.kush.banbah.soloprojectbackend.controller;
 
 import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
-import com.kush.banbah.soloprojectbackend.exceptions.InvalidTestNameException;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestException;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.InvalidTestNameException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +36,12 @@ public class GlobalExceptionHandlerController {
 
     }
 
-    @ExceptionHandler(InvalidTestNameException.class)
-    public ResponseEntity<Object> handleInvalidTestNameException(InvalidTestNameException ex) {
+    @ExceptionHandler(InvalidRequestException.class)
+    public ResponseEntity<Object> handleInvalidRequestException(Exception e) {
 
         return ResponseEntity
                 .status(400)
-                .body(ex.getMessage());
+                .body(e.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
