@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.authConfig;
+package com.kush.banbah.soloprojectbackend.config.authConfig;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
