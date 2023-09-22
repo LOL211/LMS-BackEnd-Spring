@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass;
+package com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass;
 
 import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
 

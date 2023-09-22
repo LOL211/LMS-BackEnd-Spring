@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound;
+package com.kush.banbah.soloprojectbackend.exceptions.entityNotFound;
 
 import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
 
