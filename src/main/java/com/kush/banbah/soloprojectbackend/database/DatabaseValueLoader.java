@@ -13,6 +13,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,7 +32,11 @@ public class DatabaseValueLoader implements ApplicationRunner {
     private final Path rootLocation;
     @Override
     public void run(ApplicationArguments args) {
-
+        try {
+            FileSystemUtils.deleteRecursively(rootLocation);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         for (int c = 0; c < 4; c++) {
             User teacher = User.builder()
                     .name("Teacher " + (c + 1))
@@ -49,25 +54,13 @@ public class DatabaseValueLoader implements ApplicationRunner {
             Set<Class> classSet = new HashSet<>();
             classSet.add(classs);
 
-            Path classPath = Path.of(rootLocation.toString(), classs.getClassName());
-            try{
-                if (Files.exists(classPath))
-                        Files.walk(classPath)
-                                .sorted(Comparator.reverseOrder())
-                                .forEach(val->{
-                            try {
-                                Files.delete(val);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                System.out.println("IO Error inside");
-                            }
-                        });
-                Files.createDirectories(classPath);
+
+            try {
+                Files.createDirectories(Path.of(rootLocation.toString(), classs.getClassName()));
+            } catch (IOException e) {
+                System.out.println("error");
             }
-            catch(Exception e) {
-                e.printStackTrace();
-                System.out.println("IO Error outside");
-            }
+
 
 
 
