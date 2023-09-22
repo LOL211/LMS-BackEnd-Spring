@@ -4,14 +4,16 @@ import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndReq
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.ScoreUpdateRequest;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass.TestDoesNotBelongToClassException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass.UserDoesNotBelongToClassException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound.ClassDoesNotExistException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound.TestNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @AllArgsConstructor
@@ -21,7 +23,7 @@ public class TestController {
     private final TestService testService;
 
     @GetMapping("/student/{className}")
-    public ResponseEntity<String> studentRequest(@PathVariable String className, Authentication auth) throws ClassDoesNotExistException, UserDoesNotBelongToClassException {
+    public ResponseEntity<String> studentRequest(@PathVariable String className, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
             return ResponseEntity
                     .status(200)
@@ -31,7 +33,7 @@ public class TestController {
     }
 
     @GetMapping("/teacher/{className}")
-    public ResponseEntity<String> teacherRequest(@PathVariable String className, Authentication auth) throws NotTeacherOfClassException, ClassDoesNotExistException {
+    public ResponseEntity<String> teacherRequest(@PathVariable String className, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
 
             return ResponseEntity
@@ -40,7 +42,7 @@ public class TestController {
     }
 
     @GetMapping("/teacher/{className}/{testName}")
-    public ResponseEntity<String> teacherRequestTest(@PathVariable String className, @PathVariable String testName, Authentication auth) throws NotTeacherOfClassException, ClassDoesNotExistException, TestNotFoundException, TestDoesNotBelongToClassException {
+    public ResponseEntity<String> teacherRequestTest(@PathVariable String className, @PathVariable String testName, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
 
             return ResponseEntity
@@ -50,7 +52,7 @@ public class TestController {
     }
 
     @PostMapping("/teacher/{className}/{testName}/{studentID}")
-    public ResponseEntity<String> teacherUpdateGrade(@PathVariable String className, @PathVariable String testName, @PathVariable int studentID, Authentication auth, @Valid @RequestBody ScoreUpdateRequest newScore) throws NotTeacherOfClassException, ClassDoesNotExistException, TestNotFoundException, UserDoesNotBelongToClassException, TestDoesNotBelongToClassException {
+    public ResponseEntity<String> teacherUpdateGrade(@PathVariable String className, @PathVariable String testName, @PathVariable int studentID, Authentication auth, @Valid @RequestBody ScoreUpdateRequest newScore) throws EntityNotFoundException, EntityDoesNotBelongException {
 
         try {
             User student = testService.updateGrade(className, testName, studentID, auth, newScore);
@@ -64,7 +66,7 @@ public class TestController {
         }
     }
         @PostMapping("/teacher/{className}")
-        public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws NotTeacherOfClassException, ClassDoesNotExistException, InvalidTestNameException {
+        public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws EntityNotFoundException,EntityDoesNotBelongException, InvalidTestNameException {
 
 
             testService.createTest(className, auth, createTest.getNewTestName());

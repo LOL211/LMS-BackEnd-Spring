@@ -1,18 +1,18 @@
 package com.kush.banbah.soloprojectbackend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kush.banbah.soloprojectbackend.auth.AuthenticationResponse;
 import com.kush.banbah.soloprojectbackend.exceptions.*;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass.TestDoesNotBelongToClassException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongToClass.UserDoesNotBelongToClassException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound.ClassDoesNotExistException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFound.TestNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,14 +62,14 @@ public class GlobalExceptionHandlerController {
                 .build();
     }
 
-    @ExceptionHandler({ClassDoesNotExistException.class, TestNotFoundException.class})
+    @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<String> handleNotFoundExceptions(Exception ex) {
         return ResponseEntity
                 .status(404)
                 .body(ex.getMessage());
     }
 
-    @ExceptionHandler({NotTeacherOfClassException.class, TestDoesNotBelongToClassException.class, UserDoesNotBelongToClassException.class})
+    @ExceptionHandler(EntityDoesNotBelongException.class)
     public ResponseEntity<String> handleForbiddenExceptions(Exception ex) {
         return ResponseEntity
                 .status(403)
