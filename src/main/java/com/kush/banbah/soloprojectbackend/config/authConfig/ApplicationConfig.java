@@ -1,4 +1,4 @@
-package com.kush.banbah.soloprojectbackend.authConfig;
+package com.kush.banbah.soloprojectbackend.config.authConfig;
 
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
 import lombok.RequiredArgsConstructor;
