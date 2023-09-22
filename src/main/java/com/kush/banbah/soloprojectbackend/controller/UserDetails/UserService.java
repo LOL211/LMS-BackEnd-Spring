@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class UserService {
 
-    private ClassRepo classRepo;
+    private final ClassRepo classRepo;
 
     public String retrieveUserDetails(Authentication auth) {
 
