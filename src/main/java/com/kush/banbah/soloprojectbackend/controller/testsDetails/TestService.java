@@ -3,6 +3,7 @@ package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.ScoreUpdateRequest;
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.StudentTestResponse;
+import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.TeacherTestListResponse;
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.TeacherTestResponse;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
@@ -73,12 +74,12 @@ public class TestService {
 
 
         ObjectMapper mapper = new ObjectMapper();
-        List<String> testNames = tests.stream().map(Tests::getTestName).toList();
+        List<TeacherTestListResponse> testListResponses = tests.stream().map(val-> new TeacherTestListResponse(val.getTestName(), val.getTest_id())).toList();
 
-        return mapper.valueToTree(testNames).toString();
+        return mapper.valueToTree(testListResponses).toString();
     }
 
-    public String getTeacherStudentScores(String className, String testName, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException {
+    public String getTeacherStudentScores(String className, int testID, Authentication auth) throws EntityDoesNotBelongException, EntityNotFoundException {
         User user = (User) auth.getPrincipal();
 
 
@@ -87,11 +88,11 @@ public class TestService {
             throw new UserDoesNotBelongToClassException(user.getName() + " does not teach " + requestClass.getClassName());
 
 
-        Tests test = testsRepo.findByTestName(testName).orElseThrow(() -> new TestNotFoundException("Test of " + testName + " does not exist"));
+        Tests test = testsRepo.findById(testID).orElseThrow(() -> new TestNotFoundException("Test of " + testID + " does not exist"));
 
 
         if (!test.getBelongsToClass().getClassName().equals(requestClass.getClassName()))
-            throw new TestDoesNotBelongToClassException("Test " + testName + " does not belong to class " + className);
+            throw new TestDoesNotBelongToClassException("Test " + test.getTest_id() + " does not belong to class " + className);
 
         List<Object[]> queryResponses = studentTestsRepo.findAllStudentTestByTest(className, test.getTest_id());
 
@@ -107,7 +108,7 @@ public class TestService {
 
     }
 
-    public User updateGrade(String className, String testName,int studentID, Authentication auth, ScoreUpdateRequest newScore) throws EntityDoesNotBelongException, EntityNotFoundException {
+    public User updateGrade(String className, int testID, int studentID, Authentication auth, ScoreUpdateRequest newScore) throws EntityDoesNotBelongException, EntityNotFoundException {
 
         User teacher = (User) auth.getPrincipal();
 
@@ -115,7 +116,7 @@ public class TestService {
 
         Class requestClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
 
-        Tests test = testsRepo.findByTestName(testName).orElseThrow(() -> new TestNotFoundException("Test of " + testName + " does not exist"));
+        Tests test = testsRepo.findById(testID).orElseThrow(() -> new TestNotFoundException("Test of " + testID + " does not exist"));
 
         List<Class> classList = classRepo.findClassByStudents(student);
 
@@ -123,7 +124,7 @@ public class TestService {
             throw new UserDoesNotBelongToClassException(teacher.getName() + " does not teach " + requestClass.getClassName());
 
         if (!test.getBelongsToClass().getClassName().equals(requestClass.getClassName()))
-            throw new TestDoesNotBelongToClassException("Test " + testName + " does not belong to class " + className);
+            throw new TestDoesNotBelongToClassException("Test " + test.getTest_id() + " does not belong to class " + className);
 
         if (!classList.contains(requestClass))
             throw new UserDoesNotBelongToClassException("Student " + student.getName() + " does not belong to " + className);

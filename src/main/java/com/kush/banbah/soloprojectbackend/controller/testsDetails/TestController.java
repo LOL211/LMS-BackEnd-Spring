@@ -38,24 +38,24 @@ public class TestController {
                     .body(testService.getTeacherTests(className, auth));
     }
 
-    @GetMapping("/teacher/{className}/{testName}")
-    public ResponseEntity<String> teacherRequestTest(@PathVariable String className, @PathVariable String testName, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
+    @GetMapping("/teacher/{className}/{testID}")
+    public ResponseEntity<String> teacherRequestTest(@PathVariable String className, @PathVariable String testID, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
 
             return ResponseEntity
                     .status(200)
-                    .body(testService.getTeacherStudentScores(className, testName, auth));
+                    .body(testService.getTeacherStudentScores(className, Integer.parseInt(testID), auth));
 
     }
 
-    @PostMapping("/teacher/{className}/{testName}/{studentID}")
-    public ResponseEntity<String> teacherUpdateGrade(@PathVariable String className, @PathVariable String testName, @PathVariable int studentID, Authentication auth, @Valid @RequestBody ScoreUpdateRequest newScore) throws EntityNotFoundException, EntityDoesNotBelongException {
+    @PostMapping("/teacher/{className}/{testID}/{studentID}")
+    public ResponseEntity<String> teacherUpdateGrade(@PathVariable String className, @PathVariable String testID, @PathVariable int studentID, Authentication auth, @Valid @RequestBody ScoreUpdateRequest newScore) throws EntityNotFoundException, EntityDoesNotBelongException {
 
         try {
-            User student = testService.updateGrade(className, testName, studentID, auth, newScore);
+            User student = testService.updateGrade(className, Integer.parseInt(testID), studentID, auth, newScore);
             return ResponseEntity
                     .status(200)
-                    .body("Updated " + testName + " score for Student " + student.getName());
+                    .body("Updated score for Student " + student.getName());
         } catch (UsernameNotFoundException e) {
             return ResponseEntity
                     .status(404)
