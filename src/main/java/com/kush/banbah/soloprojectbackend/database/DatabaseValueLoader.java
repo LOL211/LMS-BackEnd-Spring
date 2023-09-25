@@ -32,11 +32,7 @@ public class DatabaseValueLoader implements ApplicationRunner {
     private final Path rootLocation;
     @Override
     public void run(ApplicationArguments args) {
-        try {
-            FileSystemUtils.deleteRecursively(rootLocation);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
         for (int c = 0; c < 4; c++) {
             User teacher = User.builder()
                     .name("Teacher " + (c + 1))
@@ -56,13 +52,11 @@ public class DatabaseValueLoader implements ApplicationRunner {
 
 
             try {
+                if(!Files.exists(Path.of(rootLocation.toString(),classs.getClassName())))
                 Files.createDirectories(Path.of(rootLocation.toString(), classs.getClassName()));
             } catch (IOException e) {
                 System.out.println("error");
             }
-
-
-
 
             teacher.setTeacher_classes(classSet);
             userRepo.save(teacher);
