@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,21 +25,16 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-
-        Map<String, Object> body = new HashMap<>();
-        List<String> errors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().forEach(val -> errors.add(val.getDefaultMessage()));
-        body.put("errors", errors);
+    public ResponseEntity<String> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
 
         return ResponseEntity
                 .status(400)
-                .body(body);
+                .body(ex.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" ")));
 
     }
 
     @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<Object> handleInvalidRequestException(Exception e) {
+    public ResponseEntity<String> handleInvalidRequestException(Exception e) {
 
         return ResponseEntity
                 .status(400)
