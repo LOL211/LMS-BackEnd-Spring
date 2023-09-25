@@ -69,7 +69,7 @@ public class FileService {
                 .filter(path -> !path.equals(classPath))
                 .map(path -> {
                     try {
-                        System.out.println(path.getFileName());
+
                         return FileListResponse.builder()
                                 .fileName(path.getFileName().toString())
                                 .fileType(Files.probeContentType(path))
