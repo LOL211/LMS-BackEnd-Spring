@@ -38,3 +38,8 @@ out/
 
 local.yml
 /uploadDir/
+/fly.toml
+/Dockerfile
+/built.jar
+/.dockerignore
+/.buildscript.bat
