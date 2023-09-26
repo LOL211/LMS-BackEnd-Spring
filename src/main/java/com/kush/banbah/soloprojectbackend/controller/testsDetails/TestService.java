@@ -7,10 +7,15 @@ import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndReq
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.TeacherTestResponse;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;
-import com.kush.banbah.soloprojectbackend.database.studentTest.*;
+import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTest;
+import com.kush.banbah.soloprojectbackend.database.studentTest.StudentTestsRepo;
+import com.kush.banbah.soloprojectbackend.database.studentTest.Tests;
+import com.kush.banbah.soloprojectbackend.database.studentTest.TestsRepo;
 import com.kush.banbah.soloprojectbackend.database.user.User;
 import com.kush.banbah.soloprojectbackend.database.user.UserRepo;
-import com.kush.banbah.soloprojectbackend.exceptions.*;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestException;
 import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.InvalidTestNameException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.TestDoesNotBelongToClassException;
 import com.kush.banbah.soloprojectbackend.exceptions.entityDoesNotBelongToClass.UserDoesNotBelongToClassException;
@@ -74,7 +79,7 @@ public class TestService {
 
 
         ObjectMapper mapper = new ObjectMapper();
-        List<TeacherTestListResponse> testListResponses = tests.stream().map(val-> new TeacherTestListResponse(val.getTestName(), val.getTest_id())).toList();
+        List<TeacherTestListResponse> testListResponses = tests.stream().map(val -> new TeacherTestListResponse(val.getTestName(), val.getTest_id())).toList();
 
         return mapper.valueToTree(testListResponses).toString();
     }
@@ -84,7 +89,7 @@ public class TestService {
 
 
         Class requestClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
-        if (requestClass.getTeacher().getId()!=user.getId())
+        if (requestClass.getTeacher().getId() != user.getId())
             throw new UserDoesNotBelongToClassException(user.getName() + " does not teach " + requestClass.getClassName());
 
 
@@ -112,15 +117,15 @@ public class TestService {
 
         User teacher = (User) auth.getPrincipal();
 
-        User student = userRepo.findById(studentID).orElseThrow(()->new UsernameNotFoundException("Student of ID "+studentID+" does not exist"));
+        User student = userRepo.findById(studentID).orElseThrow(() -> new UsernameNotFoundException("Student of ID " + studentID + " does not exist"));
 
-        Class requestClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+        Class requestClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
 
         Tests test = testsRepo.findById(testID).orElseThrow(() -> new TestNotFoundException("Test of " + testID + " does not exist"));
 
         List<Class> classList = classRepo.findClassByStudents(student);
 
-        if (requestClass.getTeacher().getId()!=teacher.getId())
+        if (requestClass.getTeacher().getId() != teacher.getId())
             throw new UserDoesNotBelongToClassException(teacher.getName() + " does not teach " + requestClass.getClassName());
 
         if (!test.getBelongsToClass().getClassName().equals(requestClass.getClassName()))
@@ -129,7 +134,7 @@ public class TestService {
         if (!classList.contains(requestClass))
             throw new UserDoesNotBelongToClassException("Student " + student.getName() + " does not belong to " + className);
 
-        StudentTest updateTest = studentTestsRepo.findByStudentAndTest(student,test).orElse(StudentTest.builder().student(student).test(test).score(0).build());
+        StudentTest updateTest = studentTestsRepo.findByStudentAndTest(student, test).orElse(StudentTest.builder().student(student).test(test).score(0).build());
 
         updateTest.setScore(Integer.parseInt(newScore.getNewScore()));
 
@@ -140,21 +145,19 @@ public class TestService {
     public void createTest(String className, Authentication auth, String newTestName) throws EntityDoesNotBelongException, EntityNotFoundException, InvalidRequestException {
         User teacher = (User) auth.getPrincipal();
 
-        Class requestClass = classRepo.findByClassName(className).orElseThrow(()->new ClassDoesNotExistException(className));
+        Class requestClass = classRepo.findByClassName(className).orElseThrow(() -> new ClassDoesNotExistException(className));
 
-        if (requestClass.getTeacher().getId()!=teacher.getId())
+        if (requestClass.getTeacher().getId() != teacher.getId())
             throw new UserDoesNotBelongToClassException(teacher.getName() + " does not teach " + requestClass.getClassName());
-            try{
-                Tests addTest = Tests.builder()
-                        .testName(newTestName)
-                        .belongsToClass(requestClass)
-                        .build();
-                testsRepo.saveAndFlush(addTest);
-            }catch(DataIntegrityViolationException e)
-            {
-                throw new InvalidTestNameException("Test "+newTestName+" already exists in class "+className);
-            }
-
+        try {
+            Tests addTest = Tests.builder()
+                    .testName(newTestName)
+                    .belongsToClass(requestClass)
+                    .build();
+            testsRepo.saveAndFlush(addTest);
+        } catch (DataIntegrityViolationException e) {
+            throw new InvalidTestNameException("Test " + newTestName + " already exists in class " + className);
+        }
 
 
     }

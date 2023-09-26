@@ -1,6 +1,5 @@
 package com.kush.banbah.soloprojectbackend.controller.UserDetails;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kush.banbah.soloprojectbackend.database.classes.Class;
 import com.kush.banbah.soloprojectbackend.database.classes.ClassRepo;

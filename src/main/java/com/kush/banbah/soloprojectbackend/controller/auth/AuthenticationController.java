@@ -6,7 +6,10 @@ import com.kush.banbah.soloprojectbackend.controller.auth.RequestAndResponse.Aut
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
@@ -19,9 +22,9 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody AuthenticationRequest authRequest) {
 
-            return ResponseEntity
-                    .status(200)
-                    .body(service.authenticate(authRequest));
+        return ResponseEntity
+                .status(200)
+                .body(service.authenticate(authRequest));
 
 
     }

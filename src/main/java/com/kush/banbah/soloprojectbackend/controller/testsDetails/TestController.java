@@ -3,8 +3,9 @@ package com.kush.banbah.soloprojectbackend.controller.testsDetails;
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.CreateTestRequest;
 import com.kush.banbah.soloprojectbackend.controller.testsDetails.ResponseAndRequest.ScoreUpdateRequest;
 import com.kush.banbah.soloprojectbackend.database.user.User;
-import com.kush.banbah.soloprojectbackend.exceptions.*;
-import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.InvalidTestNameException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
+import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
+import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +23,9 @@ public class TestController {
     @GetMapping("/student/{className}")
     public ResponseEntity<String> studentRequest(@PathVariable String className, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
-            return ResponseEntity
-                    .status(200)
-                    .body(testService.getStudentScores(className, auth));
+        return ResponseEntity
+                .status(200)
+                .body(testService.getStudentScores(className, auth));
 
 
     }
@@ -33,18 +34,18 @@ public class TestController {
     public ResponseEntity<String> teacherRequest(@PathVariable String className, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
 
-            return ResponseEntity
-                    .status(200)
-                    .body(testService.getTeacherTests(className, auth));
+        return ResponseEntity
+                .status(200)
+                .body(testService.getTeacherTests(className, auth));
     }
 
     @GetMapping("/teacher/{className}/{testID}")
     public ResponseEntity<String> teacherRequestTest(@PathVariable String className, @PathVariable String testID, Authentication auth) throws EntityNotFoundException, EntityDoesNotBelongException {
 
 
-            return ResponseEntity
-                    .status(200)
-                    .body(testService.getTeacherStudentScores(className, Integer.parseInt(testID), auth));
+        return ResponseEntity
+                .status(200)
+                .body(testService.getTeacherStudentScores(className, Integer.parseInt(testID), auth));
 
     }
 
@@ -62,18 +63,19 @@ public class TestController {
                     .body(e.getMessage());
         }
     }
-        @PostMapping("/teacher/{className}")
-        public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws EntityNotFoundException, InvalidRequestException, EntityDoesNotBelongException {
+
+    @PostMapping("/teacher/{className}")
+    public ResponseEntity<String> teacherCreateTest(@PathVariable String className, Authentication auth, @Valid @RequestBody CreateTestRequest createTest) throws EntityNotFoundException, InvalidRequestException, EntityDoesNotBelongException {
 
 
-            testService.createTest(className, auth, createTest.getNewTestName());
+        testService.createTest(className, auth, createTest.getNewTestName());
 
 
-            return ResponseEntity
-                    .status(201)
-                    .body("Created Test "+createTest.getNewTestName()+" for class "+className);
-        }
-
+        return ResponseEntity
+                .status(201)
+                .body("Created Test " + createTest.getNewTestName() + " for class " + className);
     }
+
+}
 
 

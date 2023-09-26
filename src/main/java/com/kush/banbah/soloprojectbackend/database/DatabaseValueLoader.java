@@ -13,12 +13,14 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -30,6 +32,7 @@ public class DatabaseValueLoader implements ApplicationRunner {
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
     private final Path rootLocation;
+
     @Override
     public void run(ApplicationArguments args) {
 
@@ -52,8 +55,8 @@ public class DatabaseValueLoader implements ApplicationRunner {
 
 
             try {
-                if(!Files.exists(Path.of(rootLocation.toString(),classs.getClassName())))
-                Files.createDirectories(Path.of(rootLocation.toString(), classs.getClassName()));
+                if (!Files.exists(Path.of(rootLocation.toString(), classs.getClassName())))
+                    Files.createDirectories(Path.of(rootLocation.toString(), classs.getClassName()));
             } catch (IOException e) {
                 System.out.println("error");
             }

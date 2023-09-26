@@ -1,8 +1,7 @@
 package com.kush.banbah.soloprojectbackend.exceptions;
 
-public class EntityNotFoundException extends Exception{
-    public EntityNotFoundException(String message)
-    {
+public class EntityNotFoundException extends Exception {
+    public EntityNotFoundException(String message) {
         super(message);
     }
 }

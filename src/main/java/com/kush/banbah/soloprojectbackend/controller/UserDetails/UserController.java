@@ -1,6 +1,5 @@
 package com.kush.banbah.soloprojectbackend.controller.UserDetails;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

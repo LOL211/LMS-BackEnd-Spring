@@ -3,7 +3,6 @@ package com.kush.banbah.soloprojectbackend.controller;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityDoesNotBelongException;
 import com.kush.banbah.soloprojectbackend.exceptions.EntityNotFoundException;
 import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestException;
-import com.kush.banbah.soloprojectbackend.exceptions.InvalidRequestExceptions.InvalidTestNameException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -74,6 +69,7 @@ public class GlobalExceptionHandlerController {
                 .status(403)
                 .body(ex.getMessage());
     }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeException(Exception ex) {
         return ResponseEntity
